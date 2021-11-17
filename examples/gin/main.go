@@ -54,6 +54,7 @@ func main() {
 	)
 	get := endpoint.New("get", "/pet/{petId}", "Find pet by ID",
 		endpoint.Handler(handle),
+		endpoint.QueryEnum("order", "string", "order by", false, []string{"asc", "desc"}),
 		endpoint.Path("petId", "integer", "ID of pet to return", true),
 		endpoint.Response(http.StatusOK, Pet{}, "successful operation"),
 	)

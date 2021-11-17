@@ -112,6 +112,20 @@ func Query(name, typ, description string, required bool) Option {
 	return parameter(p)
 }
 
+// Query defines a query parameter for the endpoint; name, typ, description, and required correspond to the matching
+// swagger fields
+func QueryEnum(name, typ, description string, required bool, enum interface{}) Option {
+	p := swagger.Parameter{
+		Name:        name,
+		In:          "query",
+		Type:        typ,
+		Description: description,
+		Required:    required,
+		Enum:        enum,
+	}
+	return parameter(p)
+}
+
 // Body defines a body parameter for the swagger endpoint as would commonly be used for the POST, PUT, and PATCH methods
 // prototype should be a struct or a pointer to struct that swag can use to reflect upon the return type
 // t represents the Type of the body
