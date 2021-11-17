@@ -22,6 +22,7 @@ import (
 	"github.com/myml/swag"
 	"github.com/myml/swag/endpoint"
 	"github.com/myml/swag/swagger"
+	"github.com/myml/swag/swagger/ui"
 )
 
 func handle(w http.ResponseWriter, _ *http.Request) {
@@ -63,13 +64,12 @@ func main() {
 	router := mux.NewRouter()
 	api.Walk(func(path string, endpoint *swagger.Endpoint) {
 		h := endpoint.Handler.(http.HandlerFunc)
-		path = swag.ColonPath(path)
 
 		router.Path(path).Methods(endpoint.Method).Handler(h)
 	})
 
 	enableCors := true
 	router.Path("/swagger").Methods("GET").Handler(api.Handler(enableCors))
-
+	router.PathPrefix("/swagger_ui").Methods("GET").Handler(ui.Handler("/swagger_ui/", api))
 	http.ListenAndServe(":8080", router)
 }
