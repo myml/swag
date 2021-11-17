@@ -19,9 +19,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/savaki/swag"
-	"github.com/savaki/swag/endpoint"
-	"github.com/savaki/swag/swagger"
+	"github.com/myml/swag"
+	"github.com/myml/swag/endpoint"
+
+	"github.com/myml/swag/swagger"
+	"github.com/myml/swag/swagger/ui"
 )
 
 func handle(c *gin.Context) {
@@ -60,7 +62,7 @@ func main() {
 		swag.Endpoints(post, get),
 	)
 
-	router := gin.New()
+	router := gin.Default()
 	api.Walk(func(path string, endpoint *swagger.Endpoint) {
 		h := endpoint.Handler.(func(c *gin.Context))
 		path = swag.ColonPath(path)
@@ -70,6 +72,6 @@ func main() {
 
 	enableCors := true
 	router.GET("/swagger", gin.WrapH(api.Handler(enableCors)))
-
+	router.GET("/swagger_ui/*filepath", gin.WrapH(ui.Handler("/swagger_ui/", api)))
 	http.ListenAndServe(":8080", router)
 }

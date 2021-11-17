@@ -19,9 +19,10 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/savaki/swag"
-	"github.com/savaki/swag/endpoint"
-	"github.com/savaki/swag/swagger"
+	"github.com/myml/swag"
+	"github.com/myml/swag/endpoint"
+	"github.com/myml/swag/swagger"
+	"github.com/myml/swag/swagger/ui"
 )
 
 func handle(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
@@ -70,6 +71,6 @@ func main() {
 
 	enableCors := true
 	router.Handler("GET", "/swagger", api.Handler(enableCors))
-
+	router.Handler("GET", "/swagger_ui/*filepath", ui.Handler("/swagger_ui/", api))
 	http.ListenAndServe(":8080", router)
 }
