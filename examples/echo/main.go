@@ -22,6 +22,7 @@ import (
 	"github.com/myml/swag"
 	"github.com/myml/swag/endpoint"
 	"github.com/myml/swag/swagger"
+	"github.com/myml/swag/swagger/ui"
 )
 
 func handle(c echo.Context) error {
@@ -89,6 +90,6 @@ func main() {
 
 	enableCors := true
 	router.GET("/swagger", echo.WrapHandler(api.Handler(enableCors)))
-
+	router.GET("/swagger_ui/*filepath", echo.WrapHandler(ui.Handler("/swagger_ui/", api)))
 	http.ListenAndServe(":8080", router)
 }

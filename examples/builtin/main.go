@@ -21,6 +21,7 @@ import (
 	"github.com/myml/swag"
 	"github.com/myml/swag/endpoint"
 	"github.com/myml/swag/swagger"
+	"github.com/myml/swag/swagger/ui"
 )
 
 func handle(w http.ResponseWriter, req *http.Request) {
@@ -73,6 +74,6 @@ func main() {
 
 	enableCors := true
 	http.Handle("/swagger", api.Handler(enableCors))
-
+	http.Handle("/swagger_ui/", ui.Handler("/swagger_ui/", api))
 	http.ListenAndServe(":8080", nil)
 }
