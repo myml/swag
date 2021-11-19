@@ -86,6 +86,12 @@ func parameter(p swagger.Parameter) Option {
 	}
 }
 
+// Parameter defines a parameter for the endpoint;
+// see https://swagger.io/docs/specification/2-0/describing-parameters/
+func Parameter(p swagger.Parameter) Option {
+	return parameter(p)
+}
+
 // Path defines a path parameter for the endpoint; name, typ, description, and required correspond to the matching
 // swagger fields
 func Path(name, typ, description string, required bool) Option {
@@ -112,7 +118,7 @@ func Query(name, typ, description string, required bool) Option {
 	return parameter(p)
 }
 
-// Query defines a query parameter for the endpoint; name, typ, description, and required correspond to the matching
+// QueryEnum defines a query parameter for the endpoint; name, typ, description, required and enum correspond to the matching
 // swagger fields
 func QueryEnum(name, typ, description string, required bool, enum interface{}) Option {
 	p := swagger.Parameter{
@@ -126,7 +132,20 @@ func QueryEnum(name, typ, description string, required bool, enum interface{}) O
 	return parameter(p)
 }
 
-// Body defines a body parameter for the swagger endpoint as would commonly be used for the POST, PUT, and PATCH methods
+// RequestHeader defines a header parameter for the endpoint; name, typ, description and required correspond to the matching
+// swagger fields
+func RequestHeader(name, typ, description string, required bool) Option {
+	p := swagger.Parameter{
+		Name:        name,
+		In:          "header",
+		Type:        typ,
+		Description: description,
+		Required:    required,
+	}
+	return parameter(p)
+}
+
+// BodyType defines a body parameter for the swagger endpoint as would commonly be used for the POST, PUT, and PATCH methods
 // prototype should be a struct or a pointer to struct that swag can use to reflect upon the return type
 // t represents the Type of the body
 func BodyType(t reflect.Type, description string, required bool) Option {
