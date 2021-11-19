@@ -19,16 +19,20 @@ import (
 	"strings"
 )
 
-func inspect(t reflect.Type, jsonTag string) Property {
+func inspect(t reflect.Type, tag reflect.StructTag) Property {
 	p := Property{
 		GoType: t,
 	}
-
-	if strings.Contains(jsonTag, ",string") {
+	if strings.Contains(tag.Get("json"), ",string") {
 		p.Type = "string"
 		return p
 	}
-
+	if v, ok := tag.Lookup("description"); ok {
+		p.Description = v
+	}
+	if v, ok := tag.Lookup("enum"); ok {
+		p.Enum = []byte(v)
+	}
 	switch p.GoType.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Uint8, reflect.Uint16, reflect.Uint32:
 		p.Type = "integer"
@@ -167,7 +171,7 @@ func defineObject(v interface{}) Object {
 			required = append(required, name)
 		}
 
-		p := inspect(field.Type, field.Tag.Get("json"))
+		p := inspect(field.Type, field.Tag)
 		properties[name] = p
 	}
 

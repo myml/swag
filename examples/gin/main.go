@@ -33,14 +33,14 @@ func handle(c *gin.Context) {
 // Category example from the swagger pet store
 type Category struct {
 	ID   int64  `json:"category"`
-	Name string `json:"name"`
+	Name string `json:"name" enum:"[\"cat\",\"dog\"]"`
 }
 
 // Pet example from the swagger pet store
 type Pet struct {
 	ID        int64    `json:"id"`
-	Category  Category `json:"category"`
-	Name      string   `json:"name"`
+	Category  Category `json:"category" required:"true"`
+	Name      string   `json:"name" description:"Cute name"`
 	PhotoUrls []string `json:"photoUrls"`
 	Tags      []string `json:"tags"`
 }
