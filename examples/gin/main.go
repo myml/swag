@@ -22,7 +22,6 @@ import (
 	"github.com/myml/swag"
 	"github.com/myml/swag/endpoint"
 
-	"github.com/myml/swag/swagger"
 	"github.com/myml/swag/swagger/ui"
 )
 
@@ -46,31 +45,25 @@ type Pet struct {
 }
 
 func main() {
-	post := endpoint.New("post", "/pet", "Add a new pet to the store",
-		endpoint.Handler(handle),
-		endpoint.Description("Additional information on adding a pet to the store"),
-		endpoint.Body(Pet{}, "Pet object that needs to be added to the store", true),
-		endpoint.Response(http.StatusOK, Pet{}, "Successfully added pet"),
-	)
-	get := endpoint.New("get", "/pet/{petId}", "Find pet by ID",
+	api := swag.New()
+	router := gin.Default()
+
+	router.GET("/pet/:id", handle)
+	api.AddEndpoint(endpoint.New("get", "/pet/{petId}", "Find pet by ID",
 		endpoint.Handler(handle),
 		endpoint.RequestHeader("X-API-Version", "string", "api version", true),
 		endpoint.QueryEnum("order", "string", "order by", false, []string{"asc", "desc"}),
 		endpoint.Path("petId", "integer", "ID of pet to return", true),
 		endpoint.Response(http.StatusOK, Pet{}, "successful operation"),
-	)
+	))
 
-	api := swag.New(
-		swag.Endpoints(post, get),
-	)
-
-	router := gin.Default()
-	api.Walk(func(path string, endpoint *swagger.Endpoint) {
-		h := endpoint.Handler.(func(c *gin.Context))
-		path = swag.ColonPath(path)
-
-		router.Handle(endpoint.Method, path, h)
-	})
+	router.POST("/pet", handle)
+	api.AddEndpoint(endpoint.New("post", "/pet", "Add a new pet to the store",
+		endpoint.Handler(handle),
+		endpoint.Description("Additional information on adding a pet to the store"),
+		endpoint.Body(Pet{}, "Pet object that needs to be added to the store", true),
+		endpoint.Response(http.StatusOK, Pet{}, "Successfully added pet"),
+	))
 
 	enableCors := true
 	router.GET("/swagger", gin.WrapH(api.Handler(enableCors)))

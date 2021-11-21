@@ -17,7 +17,6 @@ func Handler(prefix string, api *swagger.API) http.HandlerFunc {
 	server := http.StripPrefix(prefix, http.FileServer(http.FS(static)))
 	return func(rw http.ResponseWriter, r *http.Request) {
 		if strings.HasSuffix(r.URL.Path, "swagger.json") {
-
 			api.Handler(false)(rw, r)
 			return
 		}
